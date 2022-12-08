@@ -28,9 +28,9 @@ class App {
         this.say(welcomeMsg);
 
         process.stdin.on('data', this.input)
-        
+
         if (process.platform === "win32") {
-            const rl = require("readline").createInterface({
+            const rl = createInterface({
                 input: process.stdin,
                 output: process.stdout
             });
