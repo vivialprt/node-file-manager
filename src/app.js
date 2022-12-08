@@ -1,9 +1,14 @@
 import { parseArgs } from "./cli.js";
-import { USERNAME_PARAM, DEFAULT_USERNAME } from "./constants.js"
+import {
+    USERNAME_PARAM,
+    DEFAULT_USERNAME,
+    WELCOME_MESSAGE_TEMPLATE
+} from "./constants.js"
 
 class App {
     constructor() {
         this.input = this.input.bind(this);
+        this.run = this.run.bind(this);
     };
 
     run() {
@@ -13,6 +18,10 @@ class App {
             this.username = args[USERNAME_PARAM];
         else
             this.username = DEFAULT_USERNAME;
+        let welcomeMsg = WELCOME_MESSAGE_TEMPLATE.replace(
+            '{username}', this.username
+        );
+        this.say(welcomeMsg);
 
         process.stdin.on('data', this.input)
     };
