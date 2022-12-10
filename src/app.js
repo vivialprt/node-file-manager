@@ -32,7 +32,7 @@ class App {
             '{cwd}', this.cwd
         );
         this.say(cwdMsg);
-        
+        this.prompt();
 
         process.stdin.on('data', this.processInput)
 
@@ -62,11 +62,16 @@ class App {
             this.say(msg);
 
         this.say(cwdMsg);
+        this.prompt();
     };
 
     say (msg) {
         process.stdout.write(msg + '\n\n');
     };
+
+    prompt () {
+        process.stdout.write('> ');
+    }
 
     teardown (exitCode = 0) {
         let exitMsg = EXIT_MESSAGE_TEMPLATE.replace(
