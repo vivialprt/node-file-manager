@@ -5,7 +5,8 @@ import {
     WELCOME_MESSAGE_TEMPLATE,
     EXIT_MESSAGE_TEMPLATE,
     CWD_MESSAGE_TEMPLATE,
-    INVALID_INPUT_MESSAGE
+    INVALID_INPUT_MESSAGE,
+    OPERATION_FAILED_MESSAGE
 } from "./constants.js";
 import createInterface from 'readline';
 
@@ -57,10 +58,19 @@ class App {
             '{cwd}', this.cwd
         );
 
-        if (msg == '.exit')
-            this.teardown();
-        else
-            this.say(INVALID_INPUT_MESSAGE);
+        switch (msg) {
+            case '.exit':
+                this.teardown();
+            case 'up':
+                try {
+                    this.unimplemented();
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE);
+                };
+                break;
+            default:
+                this.say(INVALID_INPUT_MESSAGE);
+        }
 
         this.say(cwdMsg);
         this.prompt();
