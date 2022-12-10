@@ -4,7 +4,8 @@ import {
     DEFAULT_USERNAME,
     WELCOME_MESSAGE_TEMPLATE,
     EXIT_MESSAGE_TEMPLATE,
-    CWD_MESSAGE_TEMPLATE
+    CWD_MESSAGE_TEMPLATE,
+    INVALID_INPUT_MESSAGE
 } from "./constants.js";
 import createInterface from 'readline';
 
@@ -59,7 +60,7 @@ class App {
         if (msg == '.exit')
             this.teardown();
         else
-            this.say(msg);
+            this.say(INVALID_INPUT_MESSAGE);
 
         this.say(cwdMsg);
         this.prompt();
