@@ -1,11 +1,13 @@
 export const parseArgs = () => {
-    const args = [];
+    const args = {};
 
     for (let i = 0; i < process.argv.length; i++)
-        if (process.argv[i].startsWith('--'))
-            args.push(`${process.argv[i].replace('--', '')} is ${process.argv[i + 1]}`);
+        if (process.argv[i].startsWith('--')) {
+            let [k, v] = process.argv[i].replace('--', '').split('=');
+            args[k] = v;
+        }
 
-    console.log(args.join(', '));
+    return args;
 };
 
 

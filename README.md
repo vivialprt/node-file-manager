@@ -1,6 +1,6 @@
 # File Manager using Node.js APIs.
 
-Features:
+## Features:
 
 - Work using CLI
 - Perform basic file operations (copy, move, delete, rename, etc.)
@@ -8,3 +8,7 @@ Features:
 - Get information about the host machine operating system
 - Perform hash calculations
 - Compress and decompress files
+
+## Run
+
+- Run `npm run app -- --username=<username>`, where `<username>` is your name.
