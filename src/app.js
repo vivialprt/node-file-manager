@@ -8,6 +8,7 @@ import {
     INVALID_INPUT_MESSAGE,
     OPERATION_FAILED_MESSAGE
 } from "./constants.js";
+import { cd } from "./navigation.js";
 import createInterface from 'readline';
 
 
@@ -52,18 +53,15 @@ class App {
         process.on("SIGINT", this.teardown);
     };
 
-    processInput (buf) {
+    async processInput (buf) {
         let msg = this._decodeBuffer(buf)
-        let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
-            '{cwd}', this.cwd
-        );
 
         switch (msg) {
             case '.exit':
                 this.teardown();
             case 'up':
                 try {
-                    this.unimplemented();
+                    await this.up();
                 } catch {
                     this.say(OPERATION_FAILED_MESSAGE);
                 };
@@ -72,8 +70,15 @@ class App {
                 this.say(INVALID_INPUT_MESSAGE);
         }
 
+        let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
+            '{cwd}', this.cwd
+        );
         this.say(cwdMsg);
         this.prompt();
+    };
+
+    async up () {
+        this.cwd = await cd(this.cwd, '..');
     };
 
     say (msg) {
