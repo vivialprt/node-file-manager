@@ -54,7 +54,8 @@ class App {
     };
 
     async processInput (buf) {
-        let msg = this._decodeBuffer(buf)
+        let input = this._decodeBuffer(buf)
+        let [msg, ...args] = input.split(' ');
 
         switch (msg) {
             case '.exit':
@@ -62,6 +63,16 @@ class App {
             case 'up':
                 try {
                     await this.up();
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+            case 'cd':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.cd(args[0]);
                     this.say('\n');
                 } catch {
                     this.say(OPERATION_FAILED_MESSAGE + '\n\n');
@@ -80,6 +91,10 @@ class App {
 
     async up () {
         this.cwd = await cd(this.cwd, '..');
+    };
+
+    async cd (newPath) {
+        this.cwd = await cd(this.cwd, newPath);
     };
 
     say (msg) {
