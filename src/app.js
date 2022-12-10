@@ -3,20 +3,22 @@ import {
     USERNAME_PARAM,
     DEFAULT_USERNAME,
     WELCOME_MESSAGE_TEMPLATE,
-    EXIT_MESSAGE_TEMPLATE
+    EXIT_MESSAGE_TEMPLATE,
+    CWD_MESSAGE_TEMPLATE
 } from "./constants.js";
 import createInterface from 'readline';
 
 
 class App {
     constructor() {
-        this.input = this.input.bind(this);
+        this.processInput = this.processInput.bind(this);
         this.run = this.run.bind(this);
         this.teardown = this.teardown.bind(this);
     };
 
     run() {
         const args = parseArgs();
+        this.cwd = process.env['HOME'];
 
         if (args.hasOwnProperty(USERNAME_PARAM))
             this.username = args[USERNAME_PARAM];
@@ -26,8 +28,13 @@ class App {
             '{username}', this.username
         );
         this.say(welcomeMsg);
+        let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
+            '{cwd}', this.cwd
+        );
+        this.say(cwdMsg);
+        
 
-        process.stdin.on('data', this.input)
+        process.stdin.on('data', this.processInput)
 
         if (process.platform === "win32") {
             const rl = createInterface({
@@ -43,16 +50,22 @@ class App {
         process.on("SIGINT", this.teardown);
     };
 
-    input (buf) {
+    processInput (buf) {
         let msg = this._decodeBuffer(buf)
+        let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
+            '{cwd}', this.cwd
+        );
+
         if (msg == '.exit')
             this.teardown();
         else
             this.say(msg);
+
+        this.say(cwdMsg);
     };
 
     say (msg) {
-        process.stdout.write(msg + '\n');
+        process.stdout.write(msg + '\n\n');
     };
 
     teardown (exitCode = 0) {
