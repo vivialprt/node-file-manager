@@ -30,12 +30,12 @@ class App {
         let welcomeMsg = WELCOME_MESSAGE_TEMPLATE.replace(
             '{username}', this.username
         );
-        this.say(welcomeMsg);
+        this.say(welcomeMsg + '\n\n');
         let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
             '{cwd}', this.cwd
         );
-        this.say(cwdMsg);
-        this.prompt();
+        this.say(cwdMsg + '\n');
+        this.say('> ');
 
         process.stdin.on('data', this.processInput)
 
@@ -62,19 +62,20 @@ class App {
             case 'up':
                 try {
                     await this.up();
+                    this.say('\n');
                 } catch {
-                    this.say(OPERATION_FAILED_MESSAGE);
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
                 };
                 break;
             default:
-                this.say(INVALID_INPUT_MESSAGE);
+                this.say(INVALID_INPUT_MESSAGE + '\n\n');
         }
 
         let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
             '{cwd}', this.cwd
         );
-        this.say(cwdMsg);
-        this.prompt();
+        this.say(cwdMsg + '\n');
+        this.say('> ');
     };
 
     async up () {
@@ -82,18 +83,14 @@ class App {
     };
 
     say (msg) {
-        process.stdout.write(msg + '\n\n');
+        process.stdout.write(msg);
     };
-
-    prompt () {
-        process.stdout.write('> ');
-    }
 
     teardown (exitCode = 0) {
         let exitMsg = EXIT_MESSAGE_TEMPLATE.replace(
             '{username}', this.username
         );
-        this.say('\n' + exitMsg);
+        this.say('\n' + exitMsg + '\n\n');
         process.exit(exitCode);
     };
 
