@@ -8,6 +8,7 @@ import {
     INVALID_INPUT_MESSAGE,
     OPERATION_FAILED_MESSAGE
 } from "./constants.js";
+import { cd } from "./navigation.js";
 import createInterface from 'readline';
 
 
@@ -29,12 +30,12 @@ class App {
         let welcomeMsg = WELCOME_MESSAGE_TEMPLATE.replace(
             '{username}', this.username
         );
-        this.say(welcomeMsg);
+        this.say(welcomeMsg + '\n\n');
         let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
             '{cwd}', this.cwd
         );
-        this.say(cwdMsg);
-        this.prompt();
+        this.say(cwdMsg + '\n');
+        this.say('> ');
 
         process.stdin.on('data', this.processInput)
 
@@ -52,43 +53,59 @@ class App {
         process.on("SIGINT", this.teardown);
     };
 
-    processInput (buf) {
-        let msg = this._decodeBuffer(buf)
-        let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
-            '{cwd}', this.cwd
-        );
+    async processInput (buf) {
+        let input = this._decodeBuffer(buf)
+        let [msg, ...args] = input.split(' ');
 
         switch (msg) {
             case '.exit':
                 this.teardown();
             case 'up':
                 try {
-                    this.unimplemented();
+                    await this.up();
+                    this.say('\n');
                 } catch {
-                    this.say(OPERATION_FAILED_MESSAGE);
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+            case 'cd':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.cd(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
                 };
                 break;
             default:
-                this.say(INVALID_INPUT_MESSAGE);
+                this.say(INVALID_INPUT_MESSAGE + '\n\n');
         }
 
-        this.say(cwdMsg);
-        this.prompt();
+        let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
+            '{cwd}', this.cwd
+        );
+        this.say(cwdMsg + '\n');
+        this.say('> ');
+    };
+
+    async up () {
+        this.cwd = await cd(this.cwd, '..');
+    };
+
+    async cd (newPath) {
+        this.cwd = await cd(this.cwd, newPath);
     };
 
     say (msg) {
-        process.stdout.write(msg + '\n\n');
+        process.stdout.write(msg);
     };
-
-    prompt () {
-        process.stdout.write('> ');
-    }
 
     teardown (exitCode = 0) {
         let exitMsg = EXIT_MESSAGE_TEMPLATE.replace(
             '{username}', this.username
         );
-        this.say('\n' + exitMsg);
+        this.say('\n' + exitMsg + '\n\n');
         process.exit(exitCode);
     };
 
