@@ -8,7 +8,7 @@ import {
     INVALID_INPUT_MESSAGE,
     OPERATION_FAILED_MESSAGE
 } from "./constants.js";
-import { cd } from "./navigation.js";
+import { cd, ls } from "./navigation.js";
 import createInterface from 'readline';
 
 
@@ -60,6 +60,7 @@ class App {
         switch (msg) {
             case '.exit':
                 this.teardown();
+
             case 'up':
                 try {
                     await this.up();
@@ -68,6 +69,7 @@ class App {
                     this.say(OPERATION_FAILED_MESSAGE + '\n\n');
                 };
                 break;
+
             case 'cd':
                 try {
                     if (args.length != 1)
@@ -78,6 +80,17 @@ class App {
                     this.say(OPERATION_FAILED_MESSAGE + '\n\n');
                 };
                 break;
+
+            case 'ls':
+                try {
+                    let table = await this.ls();
+                    console.table(table);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             default:
                 this.say(INVALID_INPUT_MESSAGE + '\n\n');
         }
@@ -96,6 +109,10 @@ class App {
     async cd (newPath) {
         this.cwd = await cd(this.cwd, newPath);
     };
+
+    async ls () {
+        return await ls(this.cwd);
+    }
 
     say (msg) {
         process.stdout.write(msg);
