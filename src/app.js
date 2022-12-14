@@ -11,9 +11,9 @@ import {
 import { cd, ls } from "./navigation.js";
 import {
     create,
-    rename
+    rename,
 } from './fs.js';
-import { read } from './streams.js';
+import { read, copy } from './streams.js';
 import createInterface from 'readline';
 
 
@@ -130,6 +130,17 @@ class App {
                 };
                 break;
 
+            case 'cp':
+                try {
+                    if (args.length != 2)
+                        throw new Error();
+                    await this.cp(args[0], args[1]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             case '':
                 this.say('\n');
                 break;
@@ -167,6 +178,10 @@ class App {
 
     async rn (oldName, newName) {
         await rename(this.cwd, oldName, newName);
+    };
+
+    async cp (src, dst) {
+        await copy(this.cwd, src, dst);
     };
 
     say (msg) {
