@@ -9,6 +9,9 @@ import {
     OPERATION_FAILED_MESSAGE
 } from "./constants.js";
 import { cd, ls } from "./navigation.js";
+import {
+    create
+} from './fs.js';
 import createInterface from 'readline';
 
 
@@ -91,6 +94,17 @@ class App {
                 };
                 break;
 
+            case 'add':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.add(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             default:
                 this.say(INVALID_INPUT_MESSAGE + '\n\n');
         }
@@ -112,6 +126,10 @@ class App {
 
     async ls () {
         return await ls(this.cwd);
+    }
+
+    async add (fName) {
+        await create(this.cwd, fName);
     }
 
     say (msg) {

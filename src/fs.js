@@ -8,6 +8,7 @@ import {
     rename as fsRename,
     access
 } from 'fs/promises';
+import path from 'path';
 
 
 export const copy = async () => {
@@ -25,11 +26,10 @@ export const copy = async () => {
 };
 
 
-export const create = async () => {
+export const create = async (cwd, fName) => {
     try {
-        const content = 'I am fresh and young';
-        const filename = 'src/fs/files/fresh.txt';
-        await writeFile(filename, content, { flag: 'wx' });
+        const fullPath = path.join(cwd, fName);
+        await writeFile(fullPath, '', { flag: 'wx' });
     } catch (err) {
         if (err.code == 'EEXIST')
             throw Error('FS operation failed');
