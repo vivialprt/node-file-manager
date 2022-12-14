@@ -89,13 +89,9 @@ export const read = async () => {
 };
 
 
-export const rename = async () => {
-    const path = 'src/fs/files';
-    const incorrectName = 'wrongFilename.txt';
-    const correctName = 'properFilename.md';
-
-    let fullIncorrectName = [path, incorrectName].join('/');
-    let fullCorrectName = [path, correctName].join('/');
+export const rename = async (cwd, incorrectName, correctName) => {
+    let fullIncorrectName = path.isAbsolute(incorrectName) ? incorrectName : path.join(cwd, incorrectName);
+    let fullCorrectName = path.isAbsolute(correctName) ? correctName : path.join(cwd, correctName);
 
     try {
         await access(fullCorrectName);

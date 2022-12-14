@@ -10,7 +10,8 @@ import {
 } from "./constants.js";
 import { cd, ls } from "./navigation.js";
 import {
-    create
+    create,
+    rename
 } from './fs.js';
 import { read } from './streams.js';
 import createInterface from 'readline';
@@ -118,6 +119,17 @@ class App {
                 };
                 break;
 
+            case 'rn':
+                try {
+                    if (args.length != 2)
+                        throw new Error();
+                    await this.rn(args[0], args[1]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             default:
                 this.say(INVALID_INPUT_MESSAGE + '\n\n');
         }
@@ -139,15 +151,19 @@ class App {
 
     async ls () {
         return await ls(this.cwd);
-    }
+    };
 
     async add (fName) {
         await create(this.cwd, fName);
-    }
+    };
 
     async cat (fName) {
         await read(this.cwd, fName);
-    }
+    };
+
+    async rn (oldName, newName) {
+        await rename(this.cwd, oldName, newName);
+    };
 
     say (msg) {
         process.stdout.write(msg);
