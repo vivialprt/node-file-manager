@@ -130,6 +130,10 @@ class App {
                 };
                 break;
 
+            case '':
+                this.say('\n');
+                break;
+
             default:
                 this.say(INVALID_INPUT_MESSAGE + '\n\n');
         }
