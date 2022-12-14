@@ -12,6 +12,7 @@ import { cd, ls } from "./navigation.js";
 import {
     create
 } from './fs.js';
+import { read } from './streams.js';
 import createInterface from 'readline';
 
 
@@ -24,7 +25,8 @@ class App {
 
     run() {
         const args = parseArgs();
-        this.cwd = process.env['HOME'];
+        // this.cwd = process.env['HOME'];
+        this.cwd = '/home/ivan2/projects/rs/node-file-manager';
 
         if (args.hasOwnProperty(USERNAME_PARAM))
             this.username = args[USERNAME_PARAM];
@@ -105,6 +107,17 @@ class App {
                 };
                 break;
 
+            case 'cat':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.cat(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             default:
                 this.say(INVALID_INPUT_MESSAGE + '\n\n');
         }
@@ -130,6 +143,10 @@ class App {
 
     async add (fName) {
         await create(this.cwd, fName);
+    }
+
+    async cat (fName) {
+        await read(this.cwd, fName);
     }
 
     say (msg) {
