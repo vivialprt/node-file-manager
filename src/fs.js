@@ -28,7 +28,11 @@ export const copy = async () => {
 
 export const create = async (cwd, fName) => {
     try {
-        const fullPath = path.join(cwd, fName);
+        let fullPath;
+        if (path.isAbsolute(fName))
+            fullPath = fName;
+        else
+            fullPath = path.join(cwd, fName);
         await writeFile(fullPath, '', { flag: 'wx' });
     } catch (err) {
         if (err.code == 'EEXIST')
