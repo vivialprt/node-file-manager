@@ -153,6 +153,17 @@ class App {
                 };
                 break;
 
+            case 'mv':
+                try {
+                    if (args.length != 2)
+                        throw new Error();
+                    await this.mv(args[0], args[1]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             case '':
                 this.say('\n');
                 break;
@@ -198,6 +209,11 @@ class App {
 
     async rm (fName) {
         await remove(this.cwd, fName);
+    };
+
+    async mv (src, dst) {
+        await copy(this.cwd, src, dst);
+        await remove(this.cwd, src);
     };
 
     say (msg) {
