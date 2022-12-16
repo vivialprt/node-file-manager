@@ -14,6 +14,7 @@ import {
     rename,
     remove
 } from './fs.js';
+import { calculateHash } from './hash.js';
 import { getOsInfo } from './os.js';
 import { read, copy } from './streams.js';
 import createInterface from 'readline';
@@ -176,6 +177,17 @@ class App {
                 };
                 break;
 
+            case 'hash':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.hash(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             case '':
                 this.say('\n');
                 break;
@@ -231,6 +243,11 @@ class App {
     async os (param) {
         let info = await getOsInfo(param);
         this.say(info);
+    };
+
+    async hash (fName) {
+        let hash = await calculateHash(this.cwd, fName);
+        this.say(hash + '\n');
     };
 
     say (msg) {
