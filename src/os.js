@@ -19,6 +19,9 @@ export const getOsInfo = async (param) => {
         case '--username':
             return os.userInfo()['username'] + '\n';
 
+        case '--architecture':
+            return os.arch() + '\n';
+
         default:
             throw new Error();
     }
