@@ -14,6 +14,7 @@ import {
     rename,
     remove
 } from './fs.js';
+import { getOsInfo } from './os.js';
 import { read, copy } from './streams.js';
 import createInterface from 'readline';
 
@@ -164,6 +165,17 @@ class App {
                 };
                 break;
 
+            case 'os':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.os(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             case '':
                 this.say('\n');
                 break;
@@ -214,6 +226,11 @@ class App {
     async mv (src, dst) {
         await copy(this.cwd, src, dst);
         await remove(this.cwd, src);
+    };
+
+    async os (param) {
+        let info = await getOsInfo(param);
+        this.say(info);
     };
 
     say (msg) {
