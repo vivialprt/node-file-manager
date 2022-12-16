@@ -48,7 +48,7 @@ export const copy = async (cwd, src, dst) => {
         writeStream.write(chunk);
     });
 
-    await Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
         readStream.on('end', () => {
             writeStream.destroy();
             resolve();
