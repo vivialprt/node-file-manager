@@ -13,6 +13,9 @@ export const getOsInfo = async (param) => {
             info = [total, ...info].join('\n');
             return info + '\n';
 
+        case '--homedir':
+            return os.homedir() + '\n';
+
         default:
             throw new Error();
     }
