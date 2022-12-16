@@ -16,6 +16,9 @@ export const getOsInfo = async (param) => {
         case '--homedir':
             return os.homedir() + '\n';
 
+        case '--username':
+            return os.userInfo()['username'] + '\n';
+
         default:
             throw new Error();
     }
