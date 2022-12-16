@@ -12,6 +12,7 @@ import { cd, ls } from "./navigation.js";
 import {
     create,
     rename,
+    remove
 } from './fs.js';
 import { read, copy } from './streams.js';
 import createInterface from 'readline';
@@ -141,6 +142,17 @@ class App {
                 };
                 break;
 
+            case 'rm':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.rm(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             case '':
                 this.say('\n');
                 break;
@@ -182,6 +194,10 @@ class App {
 
     async cp (src, dst) {
         await copy(this.cwd, src, dst);
+    };
+
+    async rm (fName) {
+        await remove(this.cwd, fName);
     };
 
     say (msg) {

@@ -44,11 +44,11 @@ export const create = async (cwd, fName) => {
 };
 
 
-export const remove = async () => {
-    const filePath = 'src/fs/files/fileToRemove.txt';
+export const remove = async (cwd, fName) => {
+    const fullPath = path.isAbsolute(fName) ? fName : path.join(cwd, fName);
 
     try {
-        await rm(filePath);
+        await rm(fullPath);
     } catch (err) {
         if (err.code == 'ENOENT')
             throw Error('FS operation failed');
