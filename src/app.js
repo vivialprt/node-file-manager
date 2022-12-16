@@ -9,6 +9,12 @@ import {
     OPERATION_FAILED_MESSAGE
 } from "./constants.js";
 import { cd, ls } from "./navigation.js";
+import {
+    create,
+    rename,
+    remove
+} from './fs.js';
+import { read, copy } from './streams.js';
 import createInterface from 'readline';
 
 
@@ -21,7 +27,8 @@ class App {
 
     run() {
         const args = parseArgs();
-        this.cwd = process.env['HOME'];
+        // this.cwd = process.env['HOME'];
+        this.cwd = '/home/ivan2/projects/rs/node-file-manager';
 
         if (args.hasOwnProperty(USERNAME_PARAM))
             this.username = args[USERNAME_PARAM];
@@ -91,6 +98,76 @@ class App {
                 };
                 break;
 
+            case 'add':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.add(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
+            case 'cat':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.cat(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
+            case 'rn':
+                try {
+                    if (args.length != 2)
+                        throw new Error();
+                    await this.rn(args[0], args[1]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
+            case 'cp':
+                try {
+                    if (args.length != 2)
+                        throw new Error();
+                    await this.cp(args[0], args[1]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
+            case 'rm':
+                try {
+                    if (args.length != 1)
+                        throw new Error();
+                    await this.rm(args[0]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
+            case 'mv':
+                try {
+                    if (args.length != 2)
+                        throw new Error();
+                    await this.mv(args[0], args[1]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
+            case '':
+                this.say('\n');
+                break;
+
             default:
                 this.say(INVALID_INPUT_MESSAGE + '\n\n');
         }
@@ -112,7 +189,32 @@ class App {
 
     async ls () {
         return await ls(this.cwd);
-    }
+    };
+
+    async add (fName) {
+        await create(this.cwd, fName);
+    };
+
+    async cat (fName) {
+        await read(this.cwd, fName);
+    };
+
+    async rn (oldName, newName) {
+        await rename(this.cwd, oldName, newName);
+    };
+
+    async cp (src, dst) {
+        await copy(this.cwd, src, dst);
+    };
+
+    async rm (fName) {
+        await remove(this.cwd, fName);
+    };
+
+    async mv (src, dst) {
+        await copy(this.cwd, src, dst);
+        await remove(this.cwd, src);
+    };
 
     say (msg) {
         process.stdout.write(msg);

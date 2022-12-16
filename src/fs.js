@@ -8,6 +8,7 @@ import {
     rename as fsRename,
     access
 } from 'fs/promises';
+import path from 'path';
 
 
 export const copy = async () => {
@@ -25,11 +26,14 @@ export const copy = async () => {
 };
 
 
-export const create = async () => {
+export const create = async (cwd, fName) => {
     try {
-        const content = 'I am fresh and young';
-        const filename = 'src/fs/files/fresh.txt';
-        await writeFile(filename, content, { flag: 'wx' });
+        let fullPath;
+        if (path.isAbsolute(fName))
+            fullPath = fName;
+        else
+            fullPath = path.join(cwd, fName);
+        await writeFile(fullPath, '', { flag: 'wx' });
     } catch (err) {
         if (err.code == 'EEXIST')
             throw Error('FS operation failed');
@@ -40,11 +44,11 @@ export const create = async () => {
 };
 
 
-export const remove = async () => {
-    const filePath = 'src/fs/files/fileToRemove.txt';
+export const remove = async (cwd, fName) => {
+    const fullPath = path.isAbsolute(fName) ? fName : path.join(cwd, fName);
 
     try {
-        await rm(filePath);
+        await rm(fullPath);
     } catch (err) {
         if (err.code == 'ENOENT')
             throw Error('FS operation failed');
@@ -85,13 +89,9 @@ export const read = async () => {
 };
 
 
-export const rename = async () => {
-    const path = 'src/fs/files';
-    const incorrectName = 'wrongFilename.txt';
-    const correctName = 'properFilename.md';
-
-    let fullIncorrectName = [path, incorrectName].join('/');
-    let fullCorrectName = [path, correctName].join('/');
+export const rename = async (cwd, incorrectName, correctName) => {
+    let fullIncorrectName = path.isAbsolute(incorrectName) ? incorrectName : path.join(cwd, incorrectName);
+    let fullCorrectName = path.isAbsolute(correctName) ? correctName : path.join(cwd, correctName);
 
     try {
         await access(fullCorrectName);
