@@ -1,27 +1,31 @@
-import { createGzip, createGunzip } from 'node:zlib';
+import { createBrotliCompress, createBrotliDecompress } from 'node:zlib';
 import { pipeline } from 'node:stream';
 import { createReadStream, createWriteStream } from 'node:fs';
 import { promisify } from 'node:util';
+import path from 'path';
 
 
-export const compress = async () => {
-    const src = 'src/zip/files/fileToCompress.txt';
-    const dst = 'src/zip/files/archive.gz';
+export const compress = async (cwd, src, dst) => {
+    const fullSrc = path.isAbsolute(src) ? src : path.join(cwd, src);
+    const fullDst = path.isAbsolute(dst) ? dst : path.join(cwd, dst);
+
     const pipe = promisify(pipeline);
 
-    try {
+    const readStream = createReadStream(fullSrc);
+    await new Promise((resolve, reject) => {
+        readStream.on('open', resolve);
+        readStream.on('error', reject);
+    });
 
-        const readStream = createReadStream(src);
-        const writeStream = createWriteStream(dst);
-        const compressStream = createGzip();
-        await pipe(readStream, compressStream, writeStream);
+    const writeStream = createWriteStream(fullDst, { flags: 'wx' });
+    await new Promise((resolve, reject) => {
+        writeStream.on('open', resolve);
+        writeStream.on('error', reject);
+    });
 
-    } catch (err) {
-        if (err.code == 'ENOENT')
-            throw Error('No such file');
-        else
-            throw Error('Pishi ashibku');
-    }
+    const compressStream = createBrotliCompress();
+
+    await pipe(readStream, compressStream, writeStream);
 
 };
 
