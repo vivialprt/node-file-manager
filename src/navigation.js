@@ -2,17 +2,15 @@ import path from 'path';
 import { open, constants, readdir } from 'fs/promises';
 
 export const cd = async (currentDir, dirToChange) => {
-    if (path.isAbsolute(dirToChange)) {
-        let fd = await open(dirToChange, constants.O_DIRECTORY);    
-        await fd.close()
-        return dirToChange;
-    }
-    else {
-        let newPath = path.normalize(path.join(currentDir, dirToChange));
-        let fd = await open(newPath, constants.O_DIRECTORY);
-        await fd.close()
-        return newPath;
-    }
+    let newPath;
+    if (path.isAbsolute(dirToChange))
+        newPath = dirToChange;
+    else
+        newPath = path.normalize(path.join(currentDir, dirToChange));
+    
+    let fd = await open(newPath, constants.O_DIRECTORY);
+    await fd.close()
+    return newPath;
 };
 
 export const ls = async (cwd) => {
