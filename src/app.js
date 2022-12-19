@@ -30,8 +30,7 @@ class App {
 
     run() {
         const args = parseArgs();
-        // this.cwd = process.env['HOME'];
-        this.cwd = '/home/ivan2/projects/rs/node-file-manager';
+        this.cwd = process.env['HOME'];
 
         if (args.hasOwnProperty(USERNAME_PARAM))
             this.username = args[USERNAME_PARAM];
@@ -65,9 +64,9 @@ class App {
 
     async processInput (buf) {
         let input = this._decodeBuffer(buf)
-        let [msg, ...args] = input.split(' ');
+        let [cmd, ...args] = input.split(/\s+/);
 
-        switch (msg) {
+        switch (cmd) {
             case '.exit':
                 this.teardown();
 
