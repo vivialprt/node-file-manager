@@ -42,7 +42,7 @@ export const decompress = async (cwd, src, dst) => {
         readStream.on('error', reject);
     });
 
-    const writeStream = createWriteStream(fullDst, { flags: 'wx' });
+    const writeStream = createWriteStream(fullDst);
     await new Promise((resolve, reject) => {
         writeStream.on('open', resolve);
         writeStream.on('error', reject);

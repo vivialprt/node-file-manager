@@ -14,7 +14,7 @@ import {
     rename,
     remove
 } from './fs.js';
-import { compress } from './zip.js';
+import { compress, decompress } from './zip.js';
 import { calculateHash } from './hash.js';
 import { getOsInfo } from './os.js';
 import { read, copy } from './streams.js';
@@ -102,14 +102,14 @@ class App {
                 break;
 
             case 'add':
-                try {
+                // try {
                     if (args.length != 1)
                         throw new Error();
                     await this.add(args[0]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
+                // } catch {
+                //     this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                // };
                 break;
 
             case 'cat':
@@ -200,6 +200,17 @@ class App {
                 };
                 break;
 
+            case 'decompress':
+                try {
+                    if (args.length != 2)
+                        throw new Error();
+                    await this.decompress(args[0], args[1]);
+                    this.say('\n');
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
+                break;
+
             case '':
                 this.say('\n');
                 break;
@@ -264,6 +275,10 @@ class App {
 
     async compress (src, dst) {
         await compress(this.cwd, src, dst);
+    };
+
+    async decompress (src, dst) {
+        await decompress(this.cwd, src, dst);
     };
 
     say (msg) {
