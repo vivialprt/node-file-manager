@@ -1,5 +1,7 @@
 import { createReadStream, createWriteStream } from 'fs';
 import { getAbsPath } from './fs.js';
+import { stat } from 'fs/promises';
+import path from 'path';
 
 
 export const read = async (cwd, fName) => {
@@ -26,7 +28,12 @@ export const write = async () => {
 
 export const copy = async (cwd, src, dst) => {
     const fullSrc = getAbsPath(cwd, src);
-    const fullDst = getAbsPath(cwd, dst);
+    let fullDst = getAbsPath(cwd, dst);
+
+    let dstStat = await stat(fullDst);
+    if (!dstStat.isDirectory())
+        throw new Error();
+    fullDst = path.join(fullDst, path.basename(src));
 
     const readStream = createReadStream(fullSrc, 'utf8');
     await new Promise((resolve, reject) => {
