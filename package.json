@@ -1,0 +1,23 @@
+{
+  "name": "node-file-manager",
+  "version": "1.0.0",
+  "description": "Simple CLI File Manager based on Node.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vivialprt/node-file-manager.git"
+  },
+  "keywords": [
+    "nodejs",
+    "assignments",
+    "filemanager"
+  ],
+  "author": "vivialprt",
+  "bugs": {
+    "url": "https://github.com/vivialprt/node-file-manager.gitissues"
+  },
+  "homepage": "https://github.com/vivialprt/node-file-manager.git#readme"
+}
