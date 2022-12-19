@@ -11,4 +11,4 @@
 
 ## Run
 
-- Run `npm run app -- --username=<username>`, where `<username>` is your name.
+- Run `npm run start -- --username=<username>`, where `<username>` is your name.
