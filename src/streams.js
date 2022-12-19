@@ -1,14 +1,17 @@
 import { createReadStream, createWriteStream } from 'fs';
-import path, { resolve } from 'path';
+import { getAbsPath } from './fs.js';
+import { stat } from 'fs/promises';
+import path from 'path';
 
 
 export const read = async (cwd, fName) => {
-    let fullPath;
-    if (path.isAbsolute(fName))
-        fullPath = fName;
-    else
-        fullPath = path.join(cwd, fName);
+    const fullPath = getAbsPath(cwd, fName);
     const readStream = createReadStream(fullPath, 'utf8');
+    await new Promise((resolve, reject) => {
+        readStream.on('open', resolve);
+        readStream.on('error', reject);
+    });
+
     readStream.on('data', (chunk) => {
         process.stdout.write(chunk);
     });
@@ -21,16 +24,14 @@ export const read = async (cwd, fName) => {
 };
 
 
-export const write = async () => {
-    const fileName = 'src/streams/files/fileToWrite.txt';
-    const writeStream = createWriteStream(fileName);
-    process.stdin.pipe(writeStream);
-};
-
-
 export const copy = async (cwd, src, dst) => {
-    let fullSrc = path.isAbsolute(src) ? src : path.join(cwd, src);
-    let fullDst = path.isAbsolute(dst) ? dst : path.join(cwd, dst);
+    const fullSrc = getAbsPath(cwd, src);
+    let fullDst = getAbsPath(cwd, dst);
+
+    let dstStat = await stat(fullDst);
+    if (!dstStat.isDirectory())
+        throw new Error();
+    fullDst = path.join(fullDst, path.basename(src));
 
     const readStream = createReadStream(fullSrc, 'utf8');
     await new Promise((resolve, reject) => {

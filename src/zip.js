@@ -2,10 +2,10 @@ import { createBrotliCompress, createBrotliDecompress } from 'node:zlib';
 import { pipeline } from 'node:stream';
 import { createReadStream, createWriteStream } from 'node:fs';
 import { promisify } from 'node:util';
-import path from 'path';
+import { getAbsPath } from './fs.js';
 
 
-export const createZipFunction = async (cwd, src, dst, mode = 'compress') => {
+export const zipFunction = async (cwd, src, dst, mode = 'compress') => {
     let compressStream;
     if (mode === 'compress')
         compressStream = createBrotliCompress();
@@ -14,8 +14,8 @@ export const createZipFunction = async (cwd, src, dst, mode = 'compress') => {
     else
         throw new Error();
 
-    const fullSrc = path.isAbsolute(src) ? src : path.join(cwd, src);
-    const fullDst = path.isAbsolute(dst) ? dst : path.join(cwd, dst);
+    const fullSrc = getAbsPath(cwd, src);
+    const fullDst = getAbsPath(cwd, dst);
 
     const pipe = promisify(pipeline);
 

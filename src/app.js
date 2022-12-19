@@ -14,7 +14,7 @@ import {
     rename,
     remove
 } from './fs.js';
-import { createZipFunction } from './zip.js';
+import { zipFunction } from './zip.js';
 import { calculateHash } from './hash.js';
 import { getOsInfo } from './os.js';
 import { read, copy } from './streams.js';
@@ -66,156 +66,112 @@ class App {
         let input = this._decodeBuffer(buf)
         let [cmd, ...args] = input.split(/\s+/);
 
-        switch (cmd) {
-            case '.exit':
-                this.teardown();
+        try {
+            switch (cmd) {
+                case '.exit':
+                    this.teardown();
 
-            case 'up':
-                try {
+                case 'up':
+                    if (args.length != 0)
+                        throw new Error();
                     await this.up();
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'cd':
-                try {
+                case 'cd':
                     if (args.length != 1)
                         throw new Error();
                     await this.cd(args[0]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'ls':
-                try {
+                case 'ls':
+                    if (args.length != 0)
+                        throw new Error();
                     let table = await this.ls();
                     console.table(table);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'add':
-                try {
+                case 'add':
                     if (args.length != 1)
                         throw new Error();
                     await this.add(args[0]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'cat':
-                try {
+                case 'cat':
                     if (args.length != 1)
                         throw new Error();
                     await this.cat(args[0]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'rn':
-                try {
+                case 'rn':
                     if (args.length != 2)
                         throw new Error();
                     await this.rn(args[0], args[1]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'cp':
-                try {
+                case 'cp':
                     if (args.length != 2)
                         throw new Error();
                     await this.cp(args[0], args[1]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'rm':
-                try {
+                case 'rm':
                     if (args.length != 1)
                         throw new Error();
                     await this.rm(args[0]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'mv':
-                try {
+                case 'mv':
                     if (args.length != 2)
                         throw new Error();
                     await this.mv(args[0], args[1]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'os':
-                try {
+                case 'os':
                     if (args.length != 1)
                         throw new Error();
                     await this.os(args[0]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'hash':
-                try {
+                case 'hash':
                     if (args.length != 1)
                         throw new Error();
                     await this.hash(args[0]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'compress':
-                try {
+                case 'compress':
                     if (args.length != 2)
                         throw new Error();
                     await this.compress(args[0], args[1]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case 'decompress':
-                try {
+                case 'decompress':
                     if (args.length != 2)
                         throw new Error();
                     await this.decompress(args[0], args[1]);
                     this.say('\n');
-                } catch {
-                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                };
-                break;
+                    break;
 
-            case '':
-                this.say('\n');
-                break;
+                case '':
+                    this.say('\n');
+                    break;
 
-            default:
-                this.say(INVALID_INPUT_MESSAGE + '\n\n');
+                default:
+                    this.say(INVALID_INPUT_MESSAGE + '\n\n');
+            }
+        } catch (err) {
+            this.say(OPERATION_FAILED_MESSAGE + '\n\n');
         }
 
         let cwdMsg = CWD_MESSAGE_TEMPLATE.replace(
@@ -273,11 +229,11 @@ class App {
     };
 
     async compress (src, dst) {
-        await createZipFunction(this.cwd, src, dst, 'compress');
+        await zipFunction(this.cwd, src, dst, 'compress');
     };
 
     async decompress (src, dst) {
-        await createZipFunction(this.cwd, src, dst, 'decompress');
+        await zipFunction(this.cwd, src, dst, 'decompress');
     };
 
     say (msg) {
