@@ -30,23 +30,26 @@ export const compress = async (cwd, src, dst) => {
 };
 
 
-export const decompress = async () => {
-    const src = 'src/zip/files/archive.gz';
-    const dst = 'src/zip/files/fileToCompress2.txt';
+export const decompress = async (cwd, src, dst) => {
+    const fullSrc = path.isAbsolute(src) ? src : path.join(cwd, src);
+    const fullDst = path.isAbsolute(dst) ? dst : path.join(cwd, dst);
+
     const pipe = promisify(pipeline);
 
-    try {
+    const readStream = createReadStream(fullSrc);
+    await new Promise((resolve, reject) => {
+        readStream.on('open', resolve);
+        readStream.on('error', reject);
+    });
 
-        const readStream = createReadStream(src);
-        const writeStream = createWriteStream(dst);
-        const decompressStream = createGunzip();
-        await pipe(readStream, decompressStream, writeStream);
+    const writeStream = createWriteStream(fullDst, { flags: 'wx' });
+    await new Promise((resolve, reject) => {
+        writeStream.on('open', resolve);
+        writeStream.on('error', reject);
+    });
 
-    } catch (err) {
-        if (err.code == 'ENOENT')
-            throw Error('No such file');
-        else
-            throw Error('Pishi ashibku');
-    }
+    const compressStream = createBrotliDecompress();
+
+    await pipe(readStream, compressStream, writeStream);
 
 };
