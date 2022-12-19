@@ -1,13 +1,9 @@
 import { createReadStream, createWriteStream } from 'fs';
-import path, { resolve } from 'path';
+import { getAbsPath } from './fs.js';
 
 
 export const read = async (cwd, fName) => {
-    let fullPath;
-    if (path.isAbsolute(fName))
-        fullPath = fName;
-    else
-        fullPath = path.join(cwd, fName);
+    const fullPath = getAbsPath(cwd, fName);
     const readStream = createReadStream(fullPath, 'utf8');
     readStream.on('data', (chunk) => {
         process.stdout.write(chunk);
@@ -29,8 +25,8 @@ export const write = async () => {
 
 
 export const copy = async (cwd, src, dst) => {
-    let fullSrc = path.isAbsolute(src) ? src : path.join(cwd, src);
-    let fullDst = path.isAbsolute(dst) ? dst : path.join(cwd, dst);
+    const fullSrc = getAbsPath(cwd, src);
+    const fullDst = getAbsPath(cwd, dst);
 
     const readStream = createReadStream(fullSrc, 'utf8');
     await new Promise((resolve, reject) => {
