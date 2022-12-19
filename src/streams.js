@@ -7,6 +7,11 @@ import path from 'path';
 export const read = async (cwd, fName) => {
     const fullPath = getAbsPath(cwd, fName);
     const readStream = createReadStream(fullPath, 'utf8');
+    await new Promise((resolve, reject) => {
+        readStream.on('open', resolve);
+        readStream.on('error', reject);
+    });
+
     readStream.on('data', (chunk) => {
         process.stdout.write(chunk);
     });

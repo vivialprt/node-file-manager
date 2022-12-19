@@ -5,7 +5,7 @@ import { promisify } from 'node:util';
 import { getAbsPath } from './fs.js';
 
 
-export const createZipFunction = async (cwd, src, dst, mode = 'compress') => {
+export const zipFunction = async (cwd, src, dst, mode = 'compress') => {
     let compressStream;
     if (mode === 'compress')
         compressStream = createBrotliCompress();
