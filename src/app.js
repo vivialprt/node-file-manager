@@ -14,7 +14,7 @@ import {
     rename,
     remove
 } from './fs.js';
-import { compress, decompress } from './zip.js';
+import { createZipFunction } from './zip.js';
 import { calculateHash } from './hash.js';
 import { getOsInfo } from './os.js';
 import { read, copy } from './streams.js';
@@ -102,14 +102,14 @@ class App {
                 break;
 
             case 'add':
-                // try {
+                try {
                     if (args.length != 1)
                         throw new Error();
                     await this.add(args[0]);
                     this.say('\n');
-                // } catch {
-                //     this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                // };
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
                 break;
 
             case 'cat':
@@ -274,11 +274,11 @@ class App {
     };
 
     async compress (src, dst) {
-        await compress(this.cwd, src, dst);
+        await createZipFunction(this.cwd, src, dst, 'compress');
     };
 
     async decompress (src, dst) {
-        await decompress(this.cwd, src, dst);
+        await createZipFunction(this.cwd, src, dst, 'decompress');
     };
 
     say (msg) {
