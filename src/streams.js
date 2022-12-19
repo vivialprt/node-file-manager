@@ -19,13 +19,6 @@ export const read = async (cwd, fName) => {
 };
 
 
-export const write = async () => {
-    const fileName = 'src/streams/files/fileToWrite.txt';
-    const writeStream = createWriteStream(fileName);
-    process.stdin.pipe(writeStream);
-};
-
-
 export const copy = async (cwd, src, dst) => {
     const fullSrc = getAbsPath(cwd, src);
     let fullDst = getAbsPath(cwd, dst);

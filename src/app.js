@@ -101,14 +101,14 @@ class App {
                 break;
 
             case 'add':
-                // try {
+                try {
                     if (args.length != 1)
                         throw new Error();
                     await this.add(args[0]);
                     this.say('\n');
-                // } catch {
-                //     this.say(OPERATION_FAILED_MESSAGE + '\n\n');
-                // };
+                } catch {
+                    this.say(OPERATION_FAILED_MESSAGE + '\n\n');
+                };
                 break;
 
             case 'cat':
